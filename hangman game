@@ -1,0 +1,116 @@
+
+################################# HANGMAN GAME CODE #############################################
+import random
+
+# Word list
+words = ["apple", "banana", "cherry", "orange", "grape", "pineapple"]
+
+def select_random_word():
+    return random.choice(words)
+
+def display_word(word, guessed_letters):
+    return ''.join([char if char in guessed_letters else '_' for char in word])
+
+def display_hangman(incorrect_guesses):
+    stages = [
+        """
+           --------
+           |      |
+           |      O
+           |     \\|/
+           |      |
+           |     / \\
+           -
+        """,
+        """
+           --------
+           |      |
+           |      O
+           |     \\|/
+           |      |
+           |     /
+           -
+        """,
+        """
+           --------
+           |      |
+           |      O
+           |     \\|/
+           |      |
+           |
+           -
+        """,
+        """
+           --------
+           |      |
+           |      O
+           |     \\|
+           |      |
+           |
+           -
+        """,
+        """
+           --------
+           |      |
+           |      O
+           |      |
+           |      |
+           |
+           -
+        """,
+        """
+           --------
+           |      |
+           |      O
+           |    
+           |     
+           |
+           -
+        """,
+        """
+           --------
+           |      |
+           |      
+           |    
+           |     
+           |
+           -
+        """
+    ]
+    return stages[incorrect_guesses]
+
+def hangman():
+    word = select_random_word()
+    guessed_letters = set()
+    incorrect_guesses = 0
+    max_guesses = len(display_hangman(0).split('\n')) - 1
+
+    print("Welcome to Hangman!")
+    print(display_hangman(incorrect_guesses))
+    print(display_word(word, guessed_letters))
+
+    while incorrect_guesses < max_guesses:
+        guess = input("Guess a letter: ").lower()
+
+        if guess in guessed_letters:
+            print("You've already guessed that letter.")
+        else:
+            guessed_letters.add(guess)
+            if guess not in word:
+                incorrect_guesses += 1
+
+            print(display_hangman(incorrect_guesses))
+            print(display_word(word, guessed_letters))
+
+            if all(char in guessed_letters for char in word):
+                print("Congratulations! You guessed the word:", word)
+                break
+
+    else:
+        print("Sorry, you ran out of guesses. The word was:", word)
+
+    play_again = input("Do you want to play again? (yes/no): ").lower()
+    if play_again == "yes":
+        hangman()
+
+hangman()
