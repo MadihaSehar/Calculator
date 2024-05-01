@@ -1,0 +1,63 @@
+####################################COUNTDOWN TIMER ####################################
+import tkinter as tk
+from tkinter import messagebox
+import time
+
+class CountdownTimer:
+    def __init__(self, master):
+        self.master = master
+        master.title("Countdown Timer")
+
+        self.label = tk.Label(master, text="Enter time in seconds:")
+        self.label.pack()
+
+        self.entry = tk.Entry(master)
+        self.entry.pack()
+
+        self.start_button = tk.Button(master, text="Start", command=self.start_countdown)
+        self.start_button.pack()
+
+        self.stop_button = tk.Button(master, text="Stop", command=self.stop_countdown, state=tk.DISABLED)
+        self.stop_button.pack()
+
+        self.remaining_time = 0
+        self.countdown_active = False
+
+    def start_countdown(self):
+        try:
+            time_seconds = int(self.entry.get())
+            if time_seconds <= 0:
+                raise ValueError
+            self.remaining_time = time_seconds
+            self.countdown_active = True
+            self.entry.config(state=tk.DISABLED)
+            self.start_button.config(state=tk.DISABLED)
+            self.stop_button.config(state=tk.NORMAL)
+            self.update_countdown()
+        except ValueError:
+            messagebox.showerror("Error", "Please enter a valid positive integer")
+
+    def stop_countdown(self):
+        self.countdown_active = False
+        self.entry.config(state=tk.NORMAL)
+        self.start_button.config(state=tk.NORMAL)
+        self.stop_button.config(state=tk.DISABLED)
+
+    def update_countdown(self):
+        if self.countdown_active:
+            self.label.config(text=f"Time remaining: {self.remaining_time} seconds")
+            if self.remaining_time <= 0:
+                self.countdown_active = False
+                messagebox.showinfo("Time's up!", "Countdown finished!")
+                self.entry.config(state=tk.NORMAL)
+                self.start_button.config(state=tk.NORMAL)
+                self.stop_button.config(state=tk.DISABLED)
+            else:
+                self.remaining_time -= 1
+                self.master.after(1000, self.update_countdown)
+                # Update every second
+        
+
+root = tk.Tk()
+timer = CountdownTimer(root)
+root.mainloop()
